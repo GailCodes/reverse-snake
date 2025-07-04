@@ -1,3 +1,10 @@
+:root {
+  --snake-body-color: #ca0404;
+  --snake-head-color: #860202;
+  --player-color: #2f2fe4;
+  --food-color: #ecec18;
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -29,25 +36,21 @@ body {
 }
 
 .cell {
-  border: 2px solid rgba(241, 237, 237, 0.1);
+  border: 2px solid rgba(241, 237, 237, 0.07);
 }
 
 .player {
-  background: blue;
-  z-index: 30;
+  background: var(--player-color);
 }
 
 .snake-head {
-  background: #860202;
-  z-index: 20;
+  background: var(--snake-head-color);
 }
 
 .snake-body {
-  background: #ca0404;
-  z-index: 20;
+  background: var(--snake-body-color);
 }
 
 .food {
-  background: yellow;
-  z-index: -10;
+  background: var(--food-color);
 }
