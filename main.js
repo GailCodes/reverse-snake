@@ -1,7 +1,7 @@
 // Game configuration
 const GRID_SIZE = 20;
-const CELL_SIZE = 20;
-const GAME_SPEED = 300;
+const CELL_SIZE = 40;
+const GAME_SPEED = 170;
 const INITIAL_FOOD_COUNT = 8;
 const INITIAL_SNAKE_LENGTH = 5;
 const FOOD_CHASE_PROBABILITY = 0.3;
@@ -16,11 +16,7 @@ let timeInterval;
 
 // DOM Elements
 const gameBoard = document.getElementById("game");
-const scoreDisplay = document.createElement("div");
-scoreDisplay.style.margin = "10px 0";
-scoreDisplay.style.fontFamily = "Arial, sans-serif";
-scoreDisplay.style.fontSize = "20px";
-document.body.prepend(scoreDisplay);
+const scoreDisplay = document.getElementById("score");
 
 function init() {
   gameBoard.innerHTML = ""; // Reset the grid so it doesn't duplicate
@@ -187,10 +183,12 @@ function checkCollisions() {
   const head = snake[0];
 
   // Check for when the snakes head touches the player
-  if (head.x === player.x && head.y === player.y) {
-    // gameOver();
-    return;
-  }
+  snake.forEach((bodyPart, index) => {
+    if (bodyPart.x === player.x && bodyPart.y === player.y) {
+      gameOver();
+      return;
+    }
+  });
 
   // Make it so the player can go through walls
   if (player.x < 0) player.x = GRID_SIZE - 1;
@@ -239,20 +237,20 @@ function render() {
     cell.style.boxShadow = "";
   });
 
-  // Draw the player (green)
+  // Draw the player (blue)
   const playerCell = document.getElementById(`cell-${player.x}-${player.y}`);
-  if (playerCell) playerCell.style.backgroundColor = "green";
+  playerCell.classList.add("player");
 
   // Draw the snake (red)
   snake.forEach((segment, index) => {
     const cell = document.getElementById(`cell-${segment.x}-${segment.y}`);
-    if (cell) cell.style.backgroundColor = index === 0 ? "darkred" : "red";
+    if (cell) cell.classList.add(index === 0 ? "snake-head" : "snake-body");
   });
 
   // Draw the food (yellow)
   foods.forEach((food) => {
     const cell = document.getElementById(`cell-${food.x}-${food.y}`);
-    if (cell) cell.style.backgroundColor = "gold";
+    if (cell) cell.classList.add("food");
   });
 
   updateScoreDisplay();
