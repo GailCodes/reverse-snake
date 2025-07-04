@@ -3,8 +3,8 @@ const GRID_SIZE = 20;
 const CELL_SIZE = 40;
 const GAME_SPEED = 170;
 const INITIAL_FOOD_COUNT = 8;
-const INITIAL_SNAKE_LENGTH = 5;
-const FOOD_CHASE_PROBABILITY = 0.3;
+const INITIAL_SNAKE_LENGTH = 10;
+const FOOD_CHASE_PROBABILITY = 0.25;
 
 // Game State
 let player = { x: 15, y: 15 };
@@ -13,14 +13,18 @@ let foods = [];
 let gameTime = 0;
 let gameInterval;
 let timeInterval;
+let highscore = {
+  time: 0,
+  snakeLength: 0,
+};
 
 // DOM Elements
 const gameBoard = document.getElementById("game");
 const scoreDisplay = document.getElementById("score");
+const highscoreDisplay = document.getElementById("highscore");
 
 function init() {
   gameBoard.innerHTML = ""; // Reset the grid so it doesn't duplicate
-  gameBoard.style.display = "grid";
   gameBoard.style.gridTemplateColumns = `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`;
   gameBoard.style.width = `${GRID_SIZE * CELL_SIZE}px`;
 
@@ -191,10 +195,10 @@ function checkCollisions() {
   });
 
   // Make it so the player can go through walls
-  if (player.x < 0) player.x = GRID_SIZE - 1;
-  else if (player.x >= GRID_SIZE) player.x = 0;
-  if (player.y < 0) player.y = GRID_SIZE;
-  else if (player.y >= GRID_SIZE) player.y = 0;
+  if (player.x < 0) player.x = 0;
+  else if (player.x >= GRID_SIZE) player.x = GRID_SIZE - 1;
+  if (player.y < 0) player.y = 0;
+  else if (player.y >= GRID_SIZE) player.y = GRID_SIZE - 1;
 }
 
 function gameOver() {
@@ -205,6 +209,9 @@ function gameOver() {
       snake.length
     }-length snake`
   );
+
+  updateHighscoreDisplay();
+
   resetGame();
 }
 
@@ -224,9 +231,22 @@ function formatTime(seconds) {
 }
 
 function updateScoreDisplay() {
-  scoreDisplay.textContent = `Time: ${formatTime(gameTime)} | Snake: ${
-    snake.length
-  } | Food: ${foods.length}`;
+  const timeScore = formatTime(gameTime);
+  const snakeLengthScore = snake.length;
+
+  scoreDisplay.textContent = `Time: ${timeScore} | Snake: ${snakeLengthScore} | Food: ${foods.length}`;
+}
+
+function updateHighscoreDisplay() {
+  const timeScore = formatTime(gameTime);
+  const snakeLengthScore = snake.length;
+
+  if (timeScore > formatTime(highscore.time)) {
+    highscore.time = gameTime;
+    highscore.snakeLength = snakeLengthScore;
+
+    highscoreDisplay.textContent = `Highscore | Time: ${timeScore} | Snake: ${snakeLengthScore}`;
+  }
 }
 
 function render() {
