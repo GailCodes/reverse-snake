@@ -250,27 +250,39 @@ function updateHighscoreDisplay() {
 }
 
 function render() {
-  // Clear the cells
+  // Clear all cells
   document.querySelectorAll(".cell").forEach((cell) => {
+    cell.innerHTML = ""; // Clear all child elements
     cell.className = "cell";
-    cell.style.backgroundColor = "";
     cell.style.boxShadow = "";
   });
 
-  // Draw the player (blue)
-  const playerCell = document.getElementById(`cell-${player.x}-${player.y}`);
-  playerCell.classList.add("player");
-
-  // Draw the snake (red)
-  snake.forEach((segment, index) => {
-    const cell = document.getElementById(`cell-${segment.x}-${segment.y}`);
-    if (cell) cell.classList.add(index === 0 ? "snake-head" : "snake-body");
-  });
-
-  // Draw the food (yellow)
+  // Draw food first (bottom layer)
   foods.forEach((food) => {
     const cell = document.getElementById(`cell-${food.x}-${food.y}`);
-    if (cell) cell.classList.add("food");
+    if (cell) {
+      const foodElement = document.createElement("div");
+      foodElement.className = "food";
+      cell.appendChild(foodElement);
+    }
+  });
+
+  // Draw player (middle layer)
+  const playerCell = document.getElementById(`cell-${player.x}-${player.y}`);
+  if (playerCell) {
+    const playerElement = document.createElement("div");
+    playerElement.className = "player";
+    playerCell.appendChild(playerElement);
+  }
+
+  // Draw snake (top layer)
+  snake.forEach((segment, index) => {
+    const cell = document.getElementById(`cell-${segment.x}-${segment.y}`);
+    if (cell) {
+      const snakeElement = document.createElement("div");
+      snakeElement.className = index === 0 ? "snake-head" : "snake-body";
+      cell.appendChild(snakeElement);
+    }
   });
 
   updateScoreDisplay();
