@@ -7,18 +7,26 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div id="game-over-popup" class="popup">
+      <div class="popup-content">
+        <h2>Game Over!</h2>
+        <div id="final-score"></div>
+        <div id="final-highscore"></div>
+        <button id="play-again-btn">Play Again</button>
+      </div>
+    </div>
+
     <div id="menu">
       <h1>Reverse Snake</h1>
       <div class="game-description">
-        You're the prey! Avoid the snake while it grows longer. Collect food to
-        survive as long as possible.
+        You're the prey! Avoid the snake while it grows longer.
       </div>
       <button id="startButton">Play Game</button>
     </div>
 
     <div id="game-container">
       <div id="score">Time: 00:00 | Snake: 0 | Food: 0</div>
-      <div id="highscore">Highscore | Time: 00:00 | Snake: 0</div>
+      <div id="highscore">HIGHSCORE | Time: 00:00 | Snake: 0</div>
       <div id="game"></div>
     </div>
 

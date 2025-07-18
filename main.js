@@ -13,7 +13,9 @@ let foods = [];
 let gameTime = 0;
 let gameInterval;
 let timeInterval;
-let highscore = {
+
+// Get players highscore from localStorage
+let highscore = JSON.parse(localStorage.getItem("reverseSnakeHighscore")) || {
   time: 0,
   snakeLength: 0,
 };
@@ -25,6 +27,11 @@ const highscoreDisplay = document.getElementById("highscore");
 const menu = document.getElementById("menu");
 const gameContainer = document.getElementById("game-container");
 const startButton = document.getElementById("startButton");
+
+const gameOverPopup = document.getElementById("game-over-popup");
+const finalScoreDisplay = document.getElementById("final-score");
+const finalHighscoreDisplay = document.getElementById("final-highscore");
+const playAgainBtn = document.getElementById("play-again-btn");
 
 // Start game when button is clicked
 startButton.addEventListener("click", startNewGame);
@@ -207,19 +214,34 @@ function checkCollisions() {
 function gameOver() {
   clearInterval(gameInterval);
   clearInterval(timeInterval);
-  alert(
-    `Game Over! You survived for ${formatTime(gameTime)} with a ${
-      snake.length
-    }-length snake`
-  );
 
-  updateHighscoreDisplay();
+  // Update highscore if needed
+  if (gameTime > highscore.time) {
+    highscore = {
+      time: gameTime,
+      snakeLength: snake.length,
+    };
+    localStorage.setItem("reverseSnakeHighscore", JSON.stringify(highscore));
+    updateHighscoreDisplay();
+  }
 
-  // Return to menu
-  gameContainer.style.display = "none";
-  menu.style.display = "flex";
-  resetGame();
+  // Show popup with scores
+  finalScoreDisplay.textContent = `Your Score: ${formatTime(
+    gameTime
+  )} | Snake Length: ${snake.length}`;
+  finalHighscoreDisplay.textContent = `Highscore: ${formatTime(
+    highscore.time
+  )} | Longest Snake: ${highscore.snakeLength}`;
+
+  gameOverPopup.style.display = "flex";
 }
+
+// Add play again button handler
+playAgainBtn.addEventListener("click", () => {
+  gameOverPopup.style.display = "none";
+  resetGame();
+  startNewGame();
+});
 
 function resetGame() {
   player = { x: 15, y: 15 };
@@ -243,16 +265,13 @@ function updateScoreDisplay() {
 }
 
 function updateHighscoreDisplay() {
-  const timeScore = formatTime(gameTime);
-  const snakeLengthScore = snake.length;
+  const timeScore = formatTime(highscore.time);
+  const snakeLengthScore = highscore.snakeLength;
 
-  if (gameTime > highscore.time) {
-    highscore.time = gameTime;
-    highscore.snakeLength = snakeLengthScore;
-
-    highscoreDisplay.textContent = `Highscore | Time: ${timeScore} | Snake: ${snakeLengthScore}`;
-  }
+  // Update the in-game score display
+  highscoreDisplay.textContent = `HIGHSCORE | Time: ${timeScore} | Snake: ${snakeLengthScore}`;
 }
+updateHighscoreDisplay();
 
 function render() {
   document.querySelectorAll(".cell").forEach((cell) => {
