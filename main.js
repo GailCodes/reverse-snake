@@ -22,9 +22,21 @@ let highscore = {
 const gameBoard = document.getElementById("game");
 const scoreDisplay = document.getElementById("score");
 const highscoreDisplay = document.getElementById("highscore");
+const menu = document.getElementById("menu");
+const gameContainer = document.getElementById("game-container");
+const startButton = document.getElementById("startButton");
+
+// Start game when button is clicked
+startButton.addEventListener("click", startNewGame);
+
+function startNewGame() {
+  menu.style.display = "none";
+  gameContainer.style.display = "flex";
+  init();
+}
 
 function init() {
-  gameBoard.innerHTML = ""; // Reset the grid so it doesn't duplicate
+  gameBoard.innerHTML = "";
   gameBoard.style.gridTemplateColumns = `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`;
   gameBoard.style.width = `${GRID_SIZE * CELL_SIZE}px`;
 
@@ -82,9 +94,7 @@ function moveSnake() {
   const head = { ...snake[0] };
   let target;
 
-  // Snake will sometimes prioritize food (based on the FOOD_CHASE_PROBABILITY variable)
   if (foods.length > 0 && Math.random() < FOOD_CHASE_PROBABILITY) {
-    // Closest food is best food
     let closestFood = foods[0];
     let minDistance = GRID_SIZE * 2;
 
@@ -101,11 +111,9 @@ function moveSnake() {
     target = player;
   }
 
-  // Move toward the chosen target
   const dx = target.x - head.x;
   const dy = target.y - head.y;
 
-  // Try primary direction first
   if (Math.abs(dx) > Math.abs(dy)) {
     head.x += dx > 0 ? 1 : -1;
   } else if (dy !== 0) {
@@ -114,13 +122,11 @@ function moveSnake() {
     head.x += dx > 0 ? 1 : -1;
   }
 
-  // Check if snakes new position would collide with itself
   const wouldCollide = snake
     .slice(1)
     .some((segment) => segment.x === head.x && segment.y === head.y);
 
   if (wouldCollide) {
-    // If about to collide with itself, try another direction
     const directions = [
       { x: 1, y: 0 },
       { x: -1, y: 0 },
@@ -148,7 +154,6 @@ function moveSnake() {
 
   snake.unshift(head);
 
-  // Check if snake ate the tasty food
   const eatenFoodIndex = foods.findIndex(
     (f) => f.x === head.x && f.y === head.y
   );
@@ -186,7 +191,6 @@ function spawnFood() {
 function checkCollisions() {
   const head = snake[0];
 
-  // Check for when the snakes head touches the player
   snake.forEach((bodyPart, index) => {
     if (bodyPart.x === player.x && bodyPart.y === player.y) {
       gameOver();
@@ -194,7 +198,6 @@ function checkCollisions() {
     }
   });
 
-  // Make it so the player can go through walls
   if (player.x < 0) player.x = 0;
   else if (player.x >= GRID_SIZE) player.x = GRID_SIZE - 1;
   if (player.y < 0) player.y = 0;
@@ -212,6 +215,9 @@ function gameOver() {
 
   updateHighscoreDisplay();
 
+  // Return to menu
+  gameContainer.style.display = "none";
+  menu.style.display = "flex";
   resetGame();
 }
 
@@ -219,7 +225,6 @@ function resetGame() {
   player = { x: 15, y: 15 };
   snake = [];
   foods = [];
-  init();
 }
 
 function formatTime(seconds) {
@@ -241,7 +246,7 @@ function updateHighscoreDisplay() {
   const timeScore = formatTime(gameTime);
   const snakeLengthScore = snake.length;
 
-  if (timeScore > formatTime(highscore.time)) {
+  if (gameTime > highscore.time) {
     highscore.time = gameTime;
     highscore.snakeLength = snakeLengthScore;
 
@@ -250,14 +255,12 @@ function updateHighscoreDisplay() {
 }
 
 function render() {
-  // Clear all cells
   document.querySelectorAll(".cell").forEach((cell) => {
-    cell.innerHTML = ""; // Clear all child elements
+    cell.innerHTML = "";
     cell.className = "cell";
     cell.style.boxShadow = "";
   });
 
-  // Draw food first (bottom layer)
   foods.forEach((food) => {
     const cell = document.getElementById(`cell-${food.x}-${food.y}`);
     if (cell) {
@@ -267,7 +270,6 @@ function render() {
     }
   });
 
-  // Draw player (middle layer)
   const playerCell = document.getElementById(`cell-${player.x}-${player.y}`);
   if (playerCell) {
     const playerElement = document.createElement("div");
@@ -275,7 +277,6 @@ function render() {
     playerCell.appendChild(playerElement);
   }
 
-  // Draw snake (top layer)
   snake.forEach((segment, index) => {
     const cell = document.getElementById(`cell-${segment.x}-${segment.y}`);
     if (cell) {
@@ -306,6 +307,3 @@ document.addEventListener("keydown", (e) => {
   }
   render();
 });
-
-// Start the game
-init();
