@@ -1,5 +1,5 @@
 // Game configuration
-const GRID_SIZE = 20;
+const GRID_SIZE = 15;
 const CELL_SIZE = 40;
 const GAME_SPEED = 170;
 const INITIAL_FOOD_COUNT = 8;
