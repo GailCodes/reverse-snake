@@ -74,7 +74,7 @@ body {
 }
 
 .food {
-  background: var(--food-color);
+  background: url("images/apple.png") center/contain no-repeat;
   z-index: 1;
 }
 
